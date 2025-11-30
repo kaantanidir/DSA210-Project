@@ -81,146 +81,152 @@ These metrics provide an additional dimension for studying whether **shifts in p
 
 ## 3. Methodology
 
-### Step 1 — Network Data Preprocessing
+### Step 1 — Tweet Stream Activity Extraction
 
-For each relevant daily `*_network.json.gz` file:
-
-1. Load and parse the interaction network (e.g., retweet or mention graph).  
-2. Extract retweet/mention edges and nodes.  
-3. Compute network-level metrics:
-   - `daily_edges` (interaction count)  
-   - `daily_nodes` (unique active accounts)  
-   - `density` (E / N²)  
-   - `avg_degree`  
-   - `political_actor_interactions`  
-   - `daily_bot_ratio` (optional, based on available metadata fields)  
-4. Aggregate all metrics into a unified **daily network activity dataset**.
-
-### Step 1b — Follower-Change Feature Extraction (Optional)
-
-Using account-level metadata and/or follower-count time series derived from the #Secim2023 tools:
-
-1. Construct a daily time series of follower counts for selected political accounts.  
-2. Compute:
-   - daily follower change per account  
-   - total and average follower change across accounts  
-   - maximum daily follower jump and drop among political figures  
-3. Aggregate these into **daily follower-change metrics** that will be merged with the network activity dataset.
+1. Load daily `*.txt.gz` tweet ID files.  
+2. Reconstruct timestamps using the Snowflake formula:
+3. Convert to `Europe/Istanbul` timezone.  
+4. Compute:
+- daily tweet count  
+- hourly tweet activity distribution  
+- rolling tweet-volume volatility  
+5. Merge into a unified dataset.
 
 ---
 
-### Step 2 — Financial Data Processing
+### Step 2 — Follower-Change Feature Extraction
 
-1. Download USD/TRY prices using `yfinance`.  
-2. Compute:
-   - **Log returns:**  
-     \[
-     \log\left(\frac{P_t}{P_{t-1}}\right)
-     \]
-   - **Realized volatility:** rolling standard deviation of log returns (e.g., 5-day window).  
-3. Align the financial time series with social network and follower-change activity by date.
+From VRL Lab follower-count time series:
 
----
+- Compute per-account daily changes  
+- Aggregate across accounts:
+- total follower growth  
+- average change  
+- max follower jump  
+- rolling follower-change volatility  
 
-### Step 3 — Exploratory Data Analysis (EDA)
-
-- Plot daily network metrics, follower-change metrics, and FX volatility on the same timeline.  
-- Highlight major political dates:
-  - April 30 (televised debate)  
-  - May 14 (general election)  
-  - May 28 (runoff election)  
-- Examine whether spikes in network activity and follower growth coincide with movements in volatility.
+This yields a multi-dimensional **attention-shift signal**.
 
 ---
 
-### Step 4 — Statistical Testing
+### Step 3 — Financial Time-Series Processing
 
-- Pearson correlation (linear relationships)  
-- Spearman correlation (rank-based relationships)  
-- Lagged cross-correlation analysis:
-  - network and follower-change metrics at day *t* vs volatility at *t+1*, *t+2*, etc.
+Using `yfinance`:
 
-**Hypotheses:**
-
-- **H1:** Higher network activity is associated with higher USD/TRY volatility.  
-- **H2:** Increases in interaction density and follower-change metrics precede volatility spikes.  
+- Fetch USD/TRY closing prices  
+- Compute log returns  
+- Compute 5-day rolling volatility  
+- Align with attention metrics by date  
 
 ---
 
-### Step 5 — Machine Learning Models
+### Step 4 — Exploratory Data Analysis (EDA)
 
-#### Baseline Model (Model 0)
+Visualization of:
 
-- Predict volatility using only lagged volatility (simple AR-style model).
+- Daily tweet activity  
+- Follower-change metrics  
+- FX volatility  
 
-#### Network- and Follower-Enhanced Models
+Event-study windows centered on:
 
+- **30 April** – Televised debate  
+- **14 May** – General election  
+- **28 May** – Runoff  
+
+Goals:
+
+- Identify co-movements  
+- Detect spikes  
+- Examine lead/lag dynamics  
+
+---
+
+### Step 5 — Statistical Testing
+
+Performed:
+
+- Pearson correlation  
+- Spearman correlation  
+- Lagged cross-correlation (t → t+1, t+2)  
+
+Hypotheses:
+
+- **H1:** Higher attention intensity is associated with higher FX volatility.  
+- **H2:** Follower-change spikes precede volatility increases.  
+
+---
+
+### Step 6 — Predictive Modeling
+
+**Baseline Model (Model 0):**
+- AR-style volatility model using lagged volatility only.
+
+**Extended Models:**
+- Ridge Regression  
 - Random Forest Regressor  
 - Gradient Boosting Regressor  
-- Ridge Regression  
 
-**Features:**
+Candidate predictors:
 
-- Lagged volatility (e.g., `vol_5d(t−1)`)  
-- Network-based metrics: `daily_edges`, `daily_nodes`, `density`, `avg_degree`, `political_actor_interactions`  
-- Follower-based metrics: `daily_follower_growth_total`, `mean_follower_change`, `max_follower_jump_political_accounts`, etc.  
-- Lagged versions of these metrics as needed  
+- lagged volatility  
+- daily tweet_count  
+- tweet_volume_volatility  
+- follower-change metrics  
+- lagged attention indicators  
 
-**Evaluation:**
+Evaluation metrics:
 
-- Train/test split  
+- RMSE  
+- MAE  
+- R²  
 - Cross-validation  
-- RMSE, MAE, R²  
-- Feature importance (for tree-based models)
+- Feature importance (tree models)  
 
-The main goal is to determine whether network and follower-change metrics add predictive power beyond historical price-based baselines.
+Goal:  
+Determine whether attention-based signals improve short-term volatility prediction.
 
 ---
 
 ## 4. Expected Outcomes
 
-- A daily dataset of election-period Twitter network and follower-change activity metrics.  
-- Empirical evidence on the relationship between social media network fluctuations and USD/TRY volatility.  
-- Identification of possible time-lagged relationships between political engagement, public attention, and financial market uncertainty.  
-- A reproducible pipeline connecting social network analysis and financial time-series modeling.
+- A merged **daily dataset** of public attention measures and financial volatility.  
+- Evidence of co-movement and event-driven interactions.  
+- Analysis of lead-lag patterns between public attention and FX volatility.  
+- Predictive models comparing baseline volatility forecasting with attention-enhanced models.  
 
 ---
 
-## 5. Limitations and Future Work
+## 5. Limitations
 
-- The dataset does **not** include tweet text; sentiment analysis cannot be performed.  
-- Network and follower-change metrics are proxies for collective engagement and coordination, not for emotional tone or individual intentions.  
-- FX volatility is influenced by macroeconomic and geopolitical factors that are not explicitly modeled.  
+- The Twitter dataset is **sampled**, not complete—some days contain sparse data.  
+- Tweet text is unavailable → no sentiment analysis.  
+- VRL follower data covers selected political actors only.  
+- FX volatility is influenced by macroeconomic factors not modeled here.  
 
-**Possible future extensions:**
-
-- More detailed bot-activity modeling based on additional metadata  
-- Multi-layer network analysis (e.g., combining follower, retweet, and mention networks)  
-- Comparison across multiple elections or other political events  
+Despite these constraints, relative activity measures show meaningful signals and allow a robust analysis of attention–volatility dynamics.
 
 ---
 
 ## 6. Ethical Considerations
 
-- All data are used under the **CC0 1.0** public-domain license of the #Secim2023 dataset and in line with Yahoo Finance’s acceptable use policy.  
-- Only anonymized network and account-level metadata are analyzed; no sensitive personal data are used.  
-- All results are reported in aggregate form.  
-- The use of AI tools (e.g., ChatGPT) for code assistance and documentation will be explicitly acknowledged in accordance with the DSA210 Academic Integrity Policy.
+- All data used is public and CC0-licensed.  
+- No personal or sensitive data is processed.  
+- Financial data usage complies with Yahoo Finance guidelines.  
+- AI tools used only for code assistance and documentation, acknowledged per DSA210 academic integrity policy.  
 
 ---
 
 ## 7. Tools and Libraries
 
-- **Data handling:** `pandas`, `numpy`  
-- **Network analysis:** `networkx`, `igraph`  
-- **Financial data:** `yfinance`  
-- **Visualization:** `matplotlib`, `seaborn`, `plotly`  
-- **Machine learning:** `scikit-learn`  
-- **Utilities:** `gzip`, `json`  
-- **Environment:** Google Colab / Jupyter Notebook  
-- **Version control:** Git and GitHub  
-
-All dependencies will be listed in `requirements.txt`.
+- `pandas`, `numpy`  
+- `networkx`, `igraph`  
+- `yfinance`  
+- `matplotlib`, `seaborn`, `plotly`  
+- `scikit-learn`  
+- `gzip`, `json`  
+- Google Colab / Jupyter Notebook  
+- Git + GitHub  
 
 ---
 
