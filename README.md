@@ -1,249 +1,237 @@
-# Network Activity and Exchange Rate Volatility During the 2023 Turkish Elections  
-### DSA210 – Introduction to Data Science (2025–2026 Fall Term) 
----
+# Predicting Short-Term Popularity Growth of YouTube Trending Videos Using Platform Metrics and Machine Learning
 
-## 1. Motivation
+## Abstract
+This project investigates whether external search interest data from Google Trends
+can improve the prediction of short-term popularity growth of YouTube trending videos.
+Using publicly available YouTube Trending data enriched with Google Trends search
+interest scores, we apply exploratory data analysis, statistical hypothesis testing,
+and machine learning models to evaluate the contribution of external signals.
 
-Social media platforms play a central role during politically sensitive periods such as national elections. Rather than using tweet text (which is not included in the publicly accessible dataset), this project investigates whether **structural social media activity signals** extracted from the *#Secim2023* Twitter network—such as retweet volume, interaction density, daily network size, and follower-count dynamics—are associated with, or predictive of, **short-term USD/TRY exchange rate volatility** during the 2023 Turkish general election period.
+## 1. Overview & Motivation
 
-The central research questions of this project are:
+YouTube is one of the most influential media platforms in the world. Videos sometimes go “viral” in a very short time, but it is not always clear which factors drive this rapid popularity.
 
-- **RQ1:** Do fluctuations in daily Twitter network activity correlate with USD/TRY volatility?  
-- **RQ2:** Does increased political engagement, coordinated interaction activity, or sudden follower-count changes precede volatility spikes?  
-- **RQ3:** Can social media network and follower-based features improve short-term volatility prediction compared to models based solely on historical price data?
+This project aims to model and predict short-term popularity growth of YouTube trending videos by combining internal platform metrics (views, likes, comments, category, channel information) with external search interest signals from Google Trends.
 
-This work bridges computational social science and behavioral finance by examining how political network dynamics and public attention relate to financial uncertainty.
-
----
-
-## 2. Data Sources
-
-### a. Social Media Network Data (Harvard Dataverse)
-
-- **Dataset:** *#Secim2023: First Public Dataset for Studying the Turkish General Election*  
-- **Persistent ID:** doi:10.7910/DVN/QJA1ZW  
-- **License:** CC0 1.0 (public domain)
-
-This dataset includes:
-
-- Daily `*_network.json.gz` files describing retweet/mention interactions  
-- `TwitterAccountList.csv` containing metadata for participating accounts  
-- `TwitterKeywordsList.tab` describing data collection strategy  
-
-**Important:** The dataset **does not include tweet text**, and therefore sentiment analysis is not possible.  
-Instead, this project extracts **interaction-based and follower-based activity metrics**.
-
-#### Extracted Daily Activity Metrics
-
-From the network and account-level metadata, the project will construct:
-
-- Number of edges in daily interaction graphs (`daily_edges`)  
-- Number of active nodes (unique users, `daily_nodes`)  
-- Network density  
-- Average degree  
-- Interaction counts involving political actors (`political_actor_interactions`)  
-- Bot-likelihood related indicators (optional, based on available fields)  
-
-#### Additional Follower-Change Metrics (Inspired by VRL Lab Tools)
-
-The VRL Lab provides a follower-count monitoring system for political figures in the #Secim2023 context, showing that daily follower changes can highlight organic and inorganic attention patterns. Inspired by this framework, the project will optionally derive **daily follower-change features**, such as:
-
-- `daily_follower_growth_total`: sum of follower increases across tracked accounts  
-- `mean_follower_change`: average daily follower change  
-- `max_follower_jump_political_accounts`: maximum single-day follower increase among selected political actors  
-- `follower_change_volatility`: rolling standard deviation of follower changes  
-
-These metrics provide an additional dimension for studying whether **shifts in public attention toward political actors** correlate with, or precede, exchange rate volatility.
+The objective is to determine which features best predict next-day view growth and to build machine learning models that classify or regress “high-growth” outcomes.
 
 ---
 
-### b. Financial Data (Yahoo Finance)
+## 2. Research Questions
 
-- **Instrument:** USD/TRY exchange rate (`USDTRY=X`)  
-- **Source:** Yahoo Finance via the `yfinance` Python library  
-- **Metrics:**
-  - Daily closing prices  
-  - Daily log returns  
-  - Realized volatility (e.g., 5-day rolling standard deviation of log returns)  
+- **RQ1:** Which video- and channel-level features (category, publication time, engagement ratios) are associated with higher short-term popularity growth?  
+- **RQ2:** Does Google search interest improve prediction accuracy?  
+- **RQ3:** Can a supervised ML model reliably predict high next-day growth?
 
 ---
 
-### c. Time Range
+## 3. Data Sources
 
-**01 April 2023 – 30 June 2023**, covering:
+### 3.1 YouTube Trending Dataset (Primary)
+CSV dataset (Kaggle) including:  
+video_id, title, channel_title, category_id, publish_time, views, likes, dislikes, comment_count, tags, description.
 
-- Pre-election period  
-- First round (14 May)  
-- Runoff (28 May)  
-- Post-election period  
-
----
-
-## 3. Methodology
-
-### Step 1 — Tweet Stream Activity Extraction
-
-1. Load daily `*.txt.gz` tweet ID files.  
-2. Reconstruct timestamps using the Snowflake formula:
-3. Convert to `Europe/Istanbul` timezone.  
-4. Compute:
-- daily tweet count  
-- hourly tweet activity distribution  
-- rolling tweet-volume volatility  
-5. Merge into a unified dataset.
+### 3.2 Google Trends Dataset (Enrichment)
+Daily search interest scores exported as CSV:  
+date, interest_score (0–100).
 
 ---
 
-### Step 2 — Follower-Change Feature Extraction
+## 4. Data Collection & Integration Plan
 
-From VRL Lab follower-count time series:
+### YouTube Data Processing
+- Download CSV files from Kaggle.  
+- Filter to a specific timeframe (e.g., several months).  
+- Engineer derived metrics:  
+  - like_to_view_ratio  
+  - comment_to_view_ratio  
+  - days_since_publication  
+  - one-hot encoded categories  
 
-- Compute per-account daily changes  
-- Aggregate across accounts:
-- total follower growth  
-- average change  
-- max follower jump  
-- rolling follower-change volatility  
+### Google Trends Processing
+- Export daily interest scores for selected topic keywords.  
+- Convert date fields into a standard format.
 
-This yields a multi-dimensional **attention-shift signal**.
-
----
-
-### Step 3 — Financial Time-Series Processing
-
-Using `yfinance`:
-
-- Fetch USD/TRY closing prices  
-- Compute log returns  
-- Compute 5-day rolling volatility  
-- Align with attention metrics by date  
+### Dataset Integration
+- Merge YouTube and Google Trends on the “date” field.  
+- Handle missing values and scale features as necessary.
 
 ---
 
-### Step 4 — Exploratory Data Analysis (EDA)
+## 5. Planned Methods
 
-Visualization of:
+### 5.1 Exploratory Data Analysis (EDA)
+- View, like, and comment distributions  
+- Category-level engagement comparisons  
+- Publication time and growth patterns  
 
-- Daily tweet activity  
-- Follower-change metrics  
-- FX volatility  
+### 5.2 Feature Engineering
+- Next-day view growth  
+- Growth rate = (views_next_day – views_today) / views_today  
+- High-growth labels are defined using category-normalized next-day view growth, where each video is compared against others within the same category.
+- Ratios: like/view, comment/view  
+- One-hot encoding  
+- Google Trends score  
 
-Event-study windows centered on:
+### 5.3 Statistical Analysis
+- Correlations between features and growth  
+- Hypothesis tests comparing high vs low trends days  
 
-- **30 April** – Televised debate  
-- **14 May** – General election  
-- **28 May** – Runoff  
+### 5.4 Hypotheses
 
-Goals:
+H0: Google Trends search interest has no association with short-term popularity growth
+of YouTube trending videos.
 
-- Identify co-movements  
-- Detect spikes  
-- Examine lead/lag dynamics  
+H1: Higher Google Trends search interest is associated with significantly higher
+short-term popularity growth.
 
----
+These hypotheses are tested using non-parametric statistical tests.
 
-### Step 5 — Statistical Testing
-
-Performed:
-
-- Pearson correlation  
-- Spearman correlation  
-- Lagged cross-correlation (t → t+1, t+2)  
-
-Hypotheses:
-
-- **H1:** Higher attention intensity is associated with higher FX volatility.  
-- **H2:** Follower-change spikes precede volatility increases.  
-
----
-
-### Step 6 — Predictive Modeling
-
-**Baseline Model (Model 0):**
-- AR-style volatility model using lagged volatility only.
-
-**Extended Models:**
-- Ridge Regression  
-- Random Forest Regressor  
-- Gradient Boosting Regressor  
-
-Candidate predictors:
-
-- lagged volatility  
-- daily tweet_count  
-- tweet_volume_volatility  
-- follower-change metrics  
-- lagged attention indicators  
-
-Evaluation metrics:
-
-- RMSE  
-- MAE  
-- R²  
-- Cross-validation  
-- Feature importance (tree models)  
-
-Goal:  
-Determine whether attention-based signals improve short-term volatility prediction.
+### 5.5 Machine Learning
+Tasks: binary classification or regression  
+Models: Logistic Regression, Random Forest, Gradient Boosting  
+Evaluation metrics: accuracy, F1-score, ROC-AUC, RMSE, MAE  
+Model interpretation via feature importances
 
 ---
 
-## 4. Expected Outcomes
+## 6. Expected Findings
 
-- A merged **daily dataset** of public attention measures and financial volatility.  
-- Evidence of co-movement and event-driven interactions.  
-- Analysis of lead-lag patterns between public attention and FX volatility.  
-- Predictive models comparing baseline volatility forecasting with attention-enhanced models.  
-
----
-
-## 5. Limitations
-
-- The Twitter dataset is **sampled**, not complete—some days contain sparse data.  
-- Tweet text is unavailable → no sentiment analysis.  
-- VRL follower data covers selected political actors only.  
-- FX volatility is influenced by macroeconomic factors not modeled here.  
-
-Despite these constraints, relative activity measures show meaningful signals and allow a robust analysis of attention–volatility dynamics.
+- External search interest from Google Trends may significantly improve predictions.  
+- Certain video categories may show higher growth tendencies.  
+- Engagement ratios are expected to be strong predictors.
 
 ---
 
-## 6. Ethical Considerations
+## 7. Limitations and Future Work
 
-- All data used is public and CC0-licensed.  
-- No personal or sensitive data is processed.  
-- Financial data usage complies with Yahoo Finance guidelines.  
-- AI tools used only for code assistance and documentation, acknowledged per DSA210 academic integrity policy.  
+### Current Limitations
+- Trending dataset reflects only already popular content  
+- Google Trends measures general topic interest, not individual video interest  
 
----
-
-## 7. Tools and Libraries
-
-- `pandas`, `numpy`  
-- `networkx`, `igraph`  
-- `yfinance`  
-- `matplotlib`, `seaborn`, `plotly`  
-- `scikit-learn`  
-- `gzip`, `json`  
-- Google Colab / Jupyter Notebook  
-- Git + GitHub  
+### Future Directions
+- NLP on titles, descriptions, and tags  
+- Multi-country dataset expansion  
+- More advanced time-series modeling approaches  
 
 ---
 
-## 8. Project Timeline  
+## 8. Project Structure (Directory Layout)
+
+The recommended folder structure is below:
+```bash
+youtube-viral-dynamics  
+│  
+├── data  
+│   ├── raw  
+│   │   ├── USvideos.csv
+│   │   ├── google_trends.csv  
+│   ├── processed  
+│       ├── youtube_merged.csv  
+│       ├── features.csv
+│  
+├── notebooks  
+│   ├── 01_eda.ipynb
+│   ├── 02_feature_engineering.ipynb 
+│   ├── 03_modeling.ipynb  
+│  
+├── src  
+│   ├── data_preparation.py  
+│   ├── feature_engineering.py  
+│   ├── modeling.py  
+│  
+├── reports  
+│   ├── figures  
+│   └── final_report.md  
+│  
+├── requirements.txt  
+└── README.md
+```
+---
+
+## 9. Reproducibility
+
+All code is written in Python, and all dependencies are listed in `requirements.txt`.  
+The entire data pipeline is implemented through Jupyter notebooks and is fully reproducible end-to-end once the raw dataset is provided.
+
+To reproduce the project:
+
+### 1. Clone the repository
+```bash
+git clone https://github.com/kaantanidir/YouTube-Trending-Google-Trends-Viral-Prediction_fullproj.git
+cd YouTube-Trending-Google-Trends-Viral-Prediction_fullproj
+```
+### 2. (Optional) Create and activate a virtual environment
+```bash
+python -m venv venv
+source venv/bin/activate       # macOS / Linux
+venv\Scripts\activate          # Windows
+```
+### 3. Install dependencies
+```bash
+pip install -r requirements.txt
+```
+### 4. Download the Kaggle dataset
+
+Place the following file in the raw data folder:
+```bash
+data/raw/USvideos.csv
+```
+### 5. Run the notebooks in order
+
+- **00_fetch_google_trends.ipynb**
+– Fetches and saves google_trends_category.csv
+– Skips the download if the file already exists (prevents API rate limits)
+
+- **01_eda.ipynb**
+– Explores the raw YouTube dataset
+
+- **02_feature_engineering.ipynb**
+– Generates features.csv and features_with_trends.csv
+– Integrates Google Trends signals and computes rolling averages
+
+- **03_modeling.ipynb**
+– Trains ML models and evaluates performance using a time-based split
+
+
+Once these steps are completed, all results in the repository can be reproduced exactly.
+
+---
+
+## 10. Ethical Considerations
+
+This project relies exclusively on publicly available, aggregated data and does not
+involve any personal or private user information. However, algorithmic bias may arise
+from the nature of YouTube’s trending mechanism, which can favor large channels or
+specific content categories. The results should therefore be interpreted as patterns
+within an already curated subset of content rather than the entire YouTube ecosystem.
+
+
+## 11. AI Usage Disclosure
+
+AI tools may be used for:
+- Drafting and refining documentation  
+- Brainstorming ideas  
+- Suggesting code components  
+
+All AI usage will be documented in a dedicated ai_usage.md file, as required by the course.
+
+---
+
+## 12. Project Timeline
 
 | Date | Milestone |
-|------|------------|
-| October 31 | Project proposal submission (this README.md) |
-| November 28 | Data collection, preprocessing, and exploratory data analysis |
-| January 2 | Application of ML models and result evaluation |
-| January 9 | Final submission before 23:59 |
+|------|-----------|
+| October 31 | Submission of proposal (this README.md) |
+| November 28 | Data collection, cleaning, and EDA |
+| January 2 | ML model development and evaluation |
+| January 9 | Final submission (23:59 deadline) |
 
 ---
 
-## 9. Author  
+## 13. Author
 
 **Kaan Tanıdır**  
 Department of Computer Science and Engineering  
 Sabancı University  
-Fall 2025–2026  
+Fall 2025–2026
