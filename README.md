@@ -91,7 +91,7 @@ short-term popularity growth.
 These hypotheses are tested using non-parametric statistical tests.
 
 ### 5.5 Machine Learning
-Tasks: binary classification or regression  
+Tasks: binary classification (high-growth vs low-growth) 
 Models: Logistic Regression, Random Forest, Gradient Boosting  
 Evaluation metrics: accuracy, F1-score, ROC-AUC, RMSE, MAE  
 Model interpretation via feature importances
@@ -250,6 +250,8 @@ AI tools may be used for:
 - Brainstorming ideas  
 - Suggesting code components  
 
+AI tools were used for drafting documentation and debugging code logic;
+all modeling decisions and interpretations were made by the author.
 All AI usage will be documented in a dedicated ai_usage.md file, as required by the course.
 
 ---
