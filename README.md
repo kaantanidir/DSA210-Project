@@ -98,15 +98,41 @@ Model interpretation via feature importances
 
 ---
 
-## 6. Expected Findings
+## 6. Findings
 
-- External search interest from Google Trends may significantly improve predictions.  
-- Certain video categories may show higher growth tendencies.  
-- Engagement ratios are expected to be strong predictors.
+Statistical analysis and machine learning experiments indicate that external
+search interest captured by Google Trends provides a modest but consistent
+contribution to predicting short-term popularity growth of YouTube trending videos.
+
+A non-parametric Mann–Whitney U test shows a statistically significant difference
+in Google Trends scores between high-growth and low-growth videos (p < 0.001),
+with higher average trend scores observed during high-growth periods.
+
+In predictive modeling, incorporating Google Trends features improves performance
+over using platform metrics alone. While overall gains are limited, the improvement
+is more pronounced in PR-AUC, which is particularly relevant given the class
+imbalance in high-growth prediction.
 
 ---
 
-## 7. Limitations and Future Work
+## 7. Machine Learning Results
+
+Two feature sets were evaluated:
+
+- **Model A:** YouTube platform metrics only  
+- **Model B:** YouTube platform metrics + Google Trends features  
+
+| Feature Set | ROC-AUC | PR-AUC |
+|------------|--------|--------|
+| YouTube only | 0.614 | 0.335 |
+| YouTube + Trends | 0.620 | 0.366 |
+
+The results show that Google Trends features provide a small but consistent
+improvement in predictive performance, particularly in precision–recall space.
+
+---
+
+## 8. Limitations and Future Work
 
 ### Current Limitations
 - Trending dataset reflects only already popular content  
@@ -117,9 +143,15 @@ Model interpretation via feature importances
 - Multi-country dataset expansion  
 - More advanced time-series modeling approaches  
 
+During initial modeling attempts, unrealistically perfect performance was observed
+due to target leakage, as growth-based variables were inadvertently included in the
+feature set. After explicitly removing all future-dependent features and applying
+video-level train–test splits, model performance decreased to realistic levels,
+highlighting the importance of leakage-aware evaluation.
+
 ---
 
-## 8. Project Structure (Directory Layout)
+## 9. Project Structure (Directory Layout)
 
 The recommended folder structure is below:
 ```bash
@@ -152,7 +184,7 @@ youtube-viral-dynamics
 ```
 ---
 
-## 9. Reproducibility
+## 10. Reproducibility
 
 All code is written in Python, and all dependencies are listed in `requirements.txt`.  
 The entire data pipeline is implemented through Jupyter notebooks and is fully reproducible end-to-end once the raw dataset is provided.
@@ -161,8 +193,9 @@ To reproduce the project:
 
 ### 1. Clone the repository
 ```bash
-git clone https://github.com/kaantanidir/YouTube-Trending-Google-Trends-Viral-Prediction_fullproj.git
-cd YouTube-Trending-Google-Trends-Viral-Prediction_fullproj
+git clone https://github.com/kaantanidir/DSA210-Project.git
+cd DSA210-Project
+
 ```
 ### 2. (Optional) Create and activate a virtual environment
 ```bash
@@ -201,7 +234,7 @@ Once these steps are completed, all results in the repository can be reproduced 
 
 ---
 
-## 10. Ethical Considerations
+## 11. Ethical Considerations
 
 This project relies exclusively on publicly available, aggregated data and does not
 involve any personal or private user information. However, algorithmic bias may arise
@@ -210,7 +243,7 @@ specific content categories. The results should therefore be interpreted as patt
 within an already curated subset of content rather than the entire YouTube ecosystem.
 
 
-## 11. AI Usage Disclosure
+## 12. AI Usage Disclosure
 
 AI tools may be used for:
 - Drafting and refining documentation  
@@ -221,7 +254,7 @@ All AI usage will be documented in a dedicated ai_usage.md file, as required by 
 
 ---
 
-## 12. Project Timeline
+## 13. Project Timeline
 
 | Date | Milestone |
 |------|-----------|
@@ -232,7 +265,7 @@ All AI usage will be documented in a dedicated ai_usage.md file, as required by 
 
 ---
 
-## 13. Author
+## 14. Author
 
 **Kaan Tanıdır**  
 Department of Computer Science and Engineering  
