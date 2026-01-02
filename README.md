@@ -58,7 +58,7 @@ date, interest_score (0–100).
 
 ---
 
-## 5. Planned Methods
+## 5. Methods
 
 ### 5.1 Exploratory Data Analysis (EDA)
 - View, like, and comment distributions  
@@ -122,9 +122,9 @@ Two feature sets were evaluated:
 - **Model A:** YouTube platform metrics only  
 - **Model B:** YouTube platform metrics + Google Trends features  
 
-```bash
+```markdown
 | Feature Set | ROC-AUC | PR-AUC |
-|------------|--------|--------|
+|------------|--------:|-------:|
 | YouTube only | 0.614 | 0.335 |
 | YouTube + Trends | 0.620 | 0.366 |
 ```
