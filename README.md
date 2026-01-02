@@ -119,18 +119,17 @@ imbalance in high-growth prediction.
 
 Two feature sets were evaluated:
 
-- **Model A:** YouTube platform metrics only  
-- **Model B:** YouTube platform metrics + Google Trends features  
+- **Model A:** YouTube platform metrics only
+- **Model B:** YouTube platform metrics + Google Trends features
 
-```markdown
 | Feature Set | ROC-AUC | PR-AUC |
 |------------|--------:|-------:|
 | YouTube only | 0.614 | 0.335 |
 | YouTube + Trends | 0.620 | 0.366 |
-``` 
 
 The results show that Google Trends features provide a small but consistent
 improvement in predictive performance, particularly in precision–recall space.
+
 
 ---
 
