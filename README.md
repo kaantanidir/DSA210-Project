@@ -127,7 +127,7 @@ Two feature sets were evaluated:
 |------------|--------:|-------:|
 | YouTube only | 0.614 | 0.335 |
 | YouTube + Trends | 0.620 | 0.366 |
-```
+
 The results show that Google Trends features provide a small but consistent
 improvement in predictive performance, particularly in precision–recall space.
 
