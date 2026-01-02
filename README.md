@@ -161,20 +161,21 @@ youtube-viral-dynamics
 ├── data  
 │   ├── raw  
 │   │   ├── USvideos.csv
-│   │   ├── google_trends.csv  
-│   ├── processed  
-│       ├── youtube_merged.csv  
+│   │   ├── google_trends_category.csv
+│   ├── processed
 │       ├── features.csv
+│       ├── features_with_trends.csv
 │  
-├── notebooks  
+├── notebooks
+│   ├── 00_fetch_google_trends_final.ipynb
 │   ├── 01_eda.ipynb
 │   ├── 02_feature_engineering.ipynb 
 │   ├── 03_modeling.ipynb  
 │  
 ├── src  
-│   ├── data_preparation.py  
-│   ├── feature_engineering.py  
-│   ├── modeling.py  
+│   ├── __pycache__
+│   │   ├── trends_fetcher.cpython-311.pyc
+│   ├── trends_fetcher.py
 │  
 ├── reports  
 │   ├── figures  
