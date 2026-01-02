@@ -28,12 +28,26 @@ The objective is to determine which features best predict next-day view growth a
 ## 3. Data Sources
 
 ### 3.1 YouTube Trending Dataset (Primary)
+The YouTube Trending Videos dataset was obtained from Kaggle
+(https://www.kaggle.com/datasets/datasnaek/youtube-new), and only the US dataset
+was used in this project.
+
 CSV dataset (Kaggle) including:  
 video_id, title, channel_title, category_id, publish_time, views, likes, dislikes, comment_count, tags, description.
 
-### 3.2 Google Trends Dataset (Enrichment)
-Daily search interest scores exported as CSV:  
-date, interest_score (0–100).
+
+### 3.2 Google Trends Data (Enrichment)
+
+Google Trends data was collected programmatically using the `pytrends` Python
+library. For each YouTube video category, representative search topics were
+manually defined, and daily search interest scores (ranging from 0 to 100) were
+retrieved from Google Trends.
+
+The resulting time-series data was aggregated and merged with the YouTube
+Trending dataset based on the trending date. The generated Google Trends files
+(e.g., category-level trend scores and rolling averages) are derived datasets
+created specifically for this project rather than externally downloaded datasets.
+
 
 ---
 
@@ -211,19 +225,21 @@ data/raw/USvideos.csv
 ```
 ### 5. Run the notebooks in order
 
-- **00_fetch_google_trends.ipynb**
-– Fetches and saves google_trends_category.csv
-– Skips the download if the file already exists (prevents API rate limits)
+- **00_fetch_google_trends_final.ipynb**  
+  Fetches Google Trends data via the `pytrends` API and saves the processed output
+  locally. No external Google Trends dataset was manually downloaded.
 
-- **01_eda.ipynb**
-– Explores the raw YouTube dataset
+- **01_eda.ipynb**  
+  Explores the raw YouTube dataset.
 
-- **02_feature_engineering.ipynb**
-– Generates features.csv and features_with_trends.csv
-– Integrates Google Trends signals and computes rolling averages
+- **02_feature_engineering.ipynb**  
+  Generates engineered features, constructs the target variable, and performs
+  statistical hypothesis testing.
 
-- **03_modeling.ipynb**
-– Trains ML models and evaluates performance using a video-level split (GroupShuffleSplit by video_id)
+- **03_modeling.ipynb**  
+  Trains and evaluates machine learning models using a leakage-aware,
+  video-level train–test split.
+
 
 
 Once these steps are completed, all results in the repository can be reproduced exactly.
@@ -238,17 +254,17 @@ from the nature of YouTube’s trending mechanism, which can favor large channel
 specific content categories. The results should therefore be interpreted as patterns
 within an already curated subset of content rather than the entire YouTube ecosystem.
 
+---
 
 ## 12. AI Usage Disclosure
 
-AI tools may be used for:
-- Drafting and refining documentation  
-- Brainstorming ideas  
-- Suggesting code components  
+AI tools were used in a limited and transparent manner during this project.
+Specifically, AI assistance was utilized for drafting and refining documentation,
+brainstorming ideas, and debugging code logic.
 
-AI tools were used for drafting documentation and debugging code logic;
-all modeling decisions and interpretations were made by the author.
-All AI usage will be documented in a dedicated ai_usage.md file, as required by the course.
+All data processing, feature engineering, modeling decisions, and result
+interpretations were performed by the author. No AI-generated outputs were used
+directly as final results without verification.
 
 ---
 
