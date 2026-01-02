@@ -75,7 +75,10 @@ date, interest_score (0–100).
 
 ### 5.3 Statistical Analysis
 - Correlations between features and growth  
-- Hypothesis tests comparing high vs low trends days  
+- Hypothesis tests comparing high vs low trends days
+- A non-parametric Mann–Whitney U test was conducted to compare Google Trends
+search interest between high-growth and low-growth videos prior to model training.
+
 
 ### 5.4 Hypotheses
 
