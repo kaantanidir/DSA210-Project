@@ -173,13 +173,7 @@ youtube-viral-dynamics
 │   ├── 03_modeling.ipynb  
 │  
 ├── src  
-│   ├── __pycache__
-│   │   ├── trends_fetcher.cpython-311.pyc
 │   ├── trends_fetcher.py
-│  
-├── reports  
-│   ├── figures  
-│   └── final_report.md  
 │  
 ├── requirements.txt  
 └── README.md
