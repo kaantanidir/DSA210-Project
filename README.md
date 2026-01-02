@@ -266,6 +266,9 @@ All data processing, feature engineering, modeling decisions, and result
 interpretations were performed by the author. No AI-generated outputs were used
 directly as final results without verification.
 
+Details of AI usage, including example prompts and generated outputs, are documented
+in a separate `ai_usage.md` file, in accordance with the course academic integrity
+guidelines.
 ---
 
 ## 13. Project Timeline
