@@ -93,7 +93,7 @@ These hypotheses are tested using non-parametric statistical tests.
 ### 5.5 Machine Learning
 Tasks: binary classification (high-growth vs low-growth) 
 Models: Logistic Regression, Random Forest, Gradient Boosting  
-Evaluation metrics: accuracy, F1-score, ROC-AUC, RMSE, MAE  
+Evaluation metrics: accuracy, F1-score, ROC-AUC, PR-AUC  
 Model interpretation via feature importances
 
 ---
@@ -122,11 +122,12 @@ Two feature sets were evaluated:
 - **Model A:** YouTube platform metrics only  
 - **Model B:** YouTube platform metrics + Google Trends features  
 
+```bash
 | Feature Set | ROC-AUC | PR-AUC |
 |------------|--------|--------|
 | YouTube only | 0.614 | 0.335 |
 | YouTube + Trends | 0.620 | 0.366 |
-
+```
 The results show that Google Trends features provide a small but consistent
 improvement in predictive performance, particularly in precision–recall space.
 
@@ -227,7 +228,7 @@ data/raw/USvideos.csv
 – Integrates Google Trends signals and computes rolling averages
 
 - **03_modeling.ipynb**
-– Trains ML models and evaluates performance using a time-based split
+– Trains ML models and evaluates performance using a video-level split (GroupShuffleSplit by video_id)
 
 
 Once these steps are completed, all results in the repository can be reproduced exactly.
