@@ -13,7 +13,7 @@ YouTube is one of the most influential media platforms in the world. Videos some
 
 This project aims to model and predict short-term popularity growth of YouTube trending videos by combining internal platform metrics (views, likes, comments, category, channel information) with external search interest signals from Google Trends.
 
-The objective is to determine which features best predict next-day view growth and to build machine learning models that classify or regress “high-growth” outcomes.
+The objective is to determine which features best predict next-day view growth and to build machine learning models that classify ‘high-growth’ outcomes.
 
 ---
 
@@ -37,7 +37,7 @@ date, interest_score (0–100).
 
 ---
 
-## 4. Data Collection & Integration Plan
+## 4. Data Collection & Integration
 
 ### YouTube Data Processing
 - Download CSV files from Kaggle.  
@@ -156,7 +156,7 @@ highlighting the importance of leakage-aware evaluation.
 
 The recommended folder structure is below:
 ```bash
-youtube-viral-dynamics  
+DSA210-Project
 │  
 ├── data  
 │   ├── raw  
