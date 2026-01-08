@@ -176,7 +176,7 @@ DSA210-Project
 │   ├── raw  
 │   │   ├── USvideos.csv
 │   │   ├── google_trends_category.csv
-│   ├── processed
+│   └── processed
 │       ├── features.csv
 │       ├── features_with_trends.csv
 │  
@@ -184,10 +184,12 @@ DSA210-Project
 │   ├── 00_fetch_google_trends_final.ipynb
 │   ├── 01_eda.ipynb
 │   ├── 02_feature_engineering.ipynb 
-│   ├── 03_modeling.ipynb  
-│  
+│   └── 03_modeling.ipynb  
+│
+├── notebooks
+│   └── DSA210_Project_Report.pdf
 ├── src  
-│   ├── trends_fetcher.py
+│   └── trends_fetcher.py
 │  
 ├── requirements.txt  
 └── README.md
