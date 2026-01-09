@@ -186,7 +186,7 @@ DSA210-Project
 │   ├── 02_feature_engineering.ipynb 
 │   └── 03_modeling.ipynb  
 │
-├── notebooks
+├── reports
 │   └── DSA210_Project_Report.pdf
 ├── src  
 │   └── trends_fetcher.py
